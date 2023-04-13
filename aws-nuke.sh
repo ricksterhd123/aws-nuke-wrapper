@@ -1,29 +1,42 @@
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 TEMP_CONFIG_FILEPATH=$(realpath .nuke-config.yml)
-PROFILE=default
-ACCOUNT_NUMBER=$1
-shift
+PROFILE=$1
+REGION=$2
+shift 2
 
 function print_usage() {
-    echo "Usage: $SCRIPT_NAME [account_number] [...args]"
+    echo "Usage: $SCRIPT_NAME <profile> <region> [options]"
 }
 
-if ! command -v docker &> /dev/null;
+if ! command -v aws &> /dev/null;
 then
-    echo "Fatal: Cannot find docker command"
+    echo "Error: Cannot find aws command, please install awscli"
     exit 1
 fi
 
-if [ -z "$ACCOUNT_NUMBER" ]; then
-    echo "Fatal: Missing required argument 'account_number'"
+if ! command -v docker &> /dev/null;
+then
+    echo "Error: Cannot find docker command, please install docker"
+    exit 1
+fi
+
+if [ -z "$PROFILE" ]; then
+    echo "Error: Missing required argument 'profile'"
     print_usage
     exit 1
 fi
 
+if [ -z "$REGION" ]; then
+    echo "Error: Missing required argument 'region'"
+    print_usage
+    exit 1
+fi
+
+ACCOUNT_NUMBER=$(aws sts get-caller-identity --region $REGION --query Account --output text)
 NUKE_CONFIG=$(cat <<-EOM
 regions:
-- eu-west-2
+- $REGION
 
 account-blocklist:
 - "999999999999" # production

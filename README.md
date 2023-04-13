@@ -1,17 +1,22 @@
 # aws-nuke wrapper script
 A simple wrapper script over [aws-nuke](https://github.com/rebuy-de/aws-nuke) by [rebuy-de](https://github.com/rebuy-de)
 
-## Pre-requisites
-docker
+## Prerequisites
+- awscli
+- docker
 
 ## Usage
-This script is designed to quickly factory reset test aws accounts.
+**Must have credentials setup in `~/.aws`**
 
-**Warning**: It uses the `default` profile credentials in `~/.aws`.
+This script is designed to quickly factory reset test aws accounts.
 
 ### Command usage
 ```
-./aws-nuke.sh [account_number] [...args]
+Usage:
+    aws-nuke.sh <profile> <region> [options]
+
+Options:
+    --no-dry-run    You need to add --no-dry-run to actually delete resources
 ```
 
 ## Example
@@ -19,6 +24,8 @@ This script is designed to quickly factory reset test aws accounts.
 # You may need this step:
 aws iam create-account-alias --profile default --account-alias abcdeftesting123-account
 chmod +x aws-nuke.sh
-./aws-nuke.sh 000000000000
-./aws-nuke.sh 000000000000 --no-dry-run
+# Review what needs deleted on region eu-west-2 for default profile
+./aws-nuke.sh default eu-west-2
+# Confirm && delete
+./aws-nuke.sh default eu-west-2 --no-dry-run
 ```
