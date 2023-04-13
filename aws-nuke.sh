@@ -1,10 +1,3 @@
-
-if ! command -v docker &> /dev/null;
-then
-    echo "Cannot find docker command"
-    exit 1
-fi
-
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 TEMP_CONFIG_FILEPATH=$(realpath .nuke-config.yml)
@@ -12,13 +5,18 @@ PROFILE=default
 ACCOUNT_NUMBER=$1
 shift
 
-echo $TEMP_CONFIG_FILEPATH
-
 function print_usage() {
     echo "Usage: $SCRIPT_NAME [account_number] [...args]"
 }
 
+if ! command -v docker &> /dev/null;
+then
+    echo "Fatal: Cannot find docker command"
+    exit 1
+fi
+
 if [ -z "$ACCOUNT_NUMBER" ]; then
+    echo "Fatal: Missing required argument 'account_number'"
     print_usage
     exit 1
 fi
