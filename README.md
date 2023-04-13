@@ -1,25 +1,24 @@
 # aws-nuke wrapper script
-Used to factory reset test aws account
+A simple wrapper script over [aws-nuke](https://github.com/rebuy-de/aws-nuke) by [rebuy-de](https://github.com/rebuy-de)
 
 ## Pre-requisites
 docker
 
 ## Usage
-Warning: The script uses the `default` profile in `~/.aws`
+This script is designed to quickly factory reset test aws accounts.
 
-Simply add your account in the nuke-config.yml, e.g.
-```yaml
-accounts:
-  "000000000000": {}
+**Warning**: It uses the `default` profile credentials in `~/.aws`.
+
+### Command usage
 ```
-or refer to the  [aws-nuke usage guide](https://github.com/rebuy-de/aws-nuke#usage)
+./aws-nuke.sh [account_number] [...args]
+```
 
+## Example
 ```bash
 # You may need this step:
 aws iam create-account-alias --profile default --account-alias abcdeftesting123-account
 chmod +x aws-nuke.sh
-./aws-nuke.sh
-./aws-nuke.sh --no-dry-run
+./aws-nuke.sh 000000000000
+./aws-nuke.sh 000000000000 --no-dry-run
 ```
-
-This script wraps [aws-nuke](https://github.com/rebuy-de/aws-nuke) by [rebuy-de](https://github.com/rebuy-de)

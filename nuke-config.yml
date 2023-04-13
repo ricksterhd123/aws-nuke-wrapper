@@ -1,8 +1,0 @@
-regions:
-- eu-west-2
-
-account-blocklist:
-- "999999999999" # production
-
-accounts:
-  "000000000000": {}

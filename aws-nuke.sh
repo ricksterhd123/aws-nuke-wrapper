@@ -5,15 +5,45 @@ then
     exit 1
 fi
 
+SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-CONFIG_DIR=$SCRIPT_DIR/nuke-config.yml
+TEMP_CONFIG_FILEPATH=$(realpath .nuke-config.yml)
 PROFILE=default
+ACCOUNT_NUMBER=$1
+shift
+
+echo $TEMP_CONFIG_FILEPATH
+
+function print_usage() {
+    echo "Usage: $SCRIPT_NAME [account_number] [...args]"
+}
+
+if [ -z "$ACCOUNT_NUMBER" ]; then
+    print_usage
+    exit 1
+fi
+
+NUKE_CONFIG=$(cat <<-EOM
+regions:
+- eu-west-2
+
+account-blocklist:
+- "999999999999" # production
+
+accounts:
+  "$ACCOUNT_NUMBER": {}
+EOM
+)
+
+echo "$NUKE_CONFIG" > $TEMP_CONFIG_FILEPATH
 
 docker run \
     --rm -it \
-    -v $CONFIG_DIR:/home/aws-nuke/config.yml \
+    -v $TEMP_CONFIG_FILEPATH:/home/aws-nuke/config.yml \
     -v /home/$USER/.aws:/home/aws-nuke/.aws \
     quay.io/rebuy/aws-nuke:latest \
     --profile $PROFILE \
     --config /home/aws-nuke/config.yml \
     "$@"
+
+rm $TEMP_CONFIG_FILEPATH
