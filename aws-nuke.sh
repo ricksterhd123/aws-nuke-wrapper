@@ -33,7 +33,7 @@ if [ -z "$REGION" ]; then
     exit 1
 fi
 
-ACCOUNT_NUMBER=$(aws sts get-caller-identity --region $REGION --query Account --output text)
+ACCOUNT_NUMBER=$(aws sts get-caller-identity --profile $PROFILE --region $REGION --query Account --output text)
 NUKE_CONFIG=$(cat <<-EOM
 regions:
 - $REGION
